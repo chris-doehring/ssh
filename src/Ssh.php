@@ -1,6 +1,5 @@
 <?php
-
-namespace Spatie\Ssh;
+namespace ChrisDoehring\Ssh;
 
 use Closure;
 use Exception;
@@ -8,46 +7,74 @@ use Symfony\Component\Process\Process;
 
 class Ssh
 {
-    protected string $user;
+    /** @var string */
+    protected $user;
 
-    protected string $host;
+    /** @var string */
+    protected $host;
 
-    protected string $pathToPrivateKey = '';
+    /** @var string */
+    protected $pathToPrivateKey = '';
 
-    protected ?int $port;
+    /** @var int|null */
+    protected $port;
 
-    protected bool $enableStrictHostChecking = true;
+    /** @var bool */
+    protected $enableStrictHostChecking = true;
 
-    protected Closure $processConfigurationClosure;
+    /** @var Closure */
+    protected $processConfigurationClosure;
 
-    protected Closure $onOutput;
+    /** @var Closure */
+    protected $onOutputClosure;
 
-    public function __construct(string $user, string $host, int $port = null)
+    /**
+     * Ssh constructor.
+     * @param string $user
+     * @param string $host
+     * @param int|null $port
+     */
+    public function __construct($user, $host, $port = null)
     {
         $this->user = $user;
 
         $this->host = $host;
 
         $this->port = $port;
-
-        $this->processConfigurationClosure = fn(Process $process) => null;
-
-        $this->onOutput = fn($type, $line) => null;
+        $this->processConfigurationClosure = static function (Process $process) {
+            return null;
+        };
+        $this->onOutputClosure = static function ($type, $line) {
+            return null;
+        };
     }
 
-    public static function create(...$args): self
+    /**
+     * @param mixed ...$args
+     * @return static
+     */
+    public static function create(...$args)
     {
         return new static(...$args);
     }
 
-    public function usePrivateKey(string $pathToPrivateKey): self
+    /**
+     * @param string $pathToPrivateKey
+     * @return static
+     */
+    public function usePrivateKey($pathToPrivateKey)
     {
         $this->pathToPrivateKey = $pathToPrivateKey;
 
         return $this;
     }
 
-    public function usePort(int $port): self
+    /**
+     * @param int $port
+     * @return $this
+     * @throws Exception
+     */
+    public function usePort($port)
     {
         if ($port < 0) {
             throw new Exception('Port must be a positive integer.');
@@ -57,28 +84,42 @@ class Ssh
         return $this;
     }
 
-    public function configureProcess(Closure $processConfigurationClosure): self
+    /**
+     * @param Closure $processConfigurationClosure
+     * @return $this
+     */
+    public function configureProcess(Closure $processConfigurationClosure)
     {
         $this->processConfigurationClosure = $processConfigurationClosure;
 
         return $this;
     }
 
-    public function onOutput(Closure $onOutput): self
+    /**
+     * @param Closure $onOutput
+     * @return $this
+     */
+    public function onOutput(Closure $onOutput)
     {
-        $this->onOutput = $onOutput;
+        $this->onOutputClosure = $onOutput;
 
         return $this;
     }
 
-    public function enableStrictHostKeyChecking(): self
+    /**
+     * @return $this
+     */
+    public function enableStrictHostKeyChecking()
     {
         $this->enableStrictHostChecking = true;
 
         return $this;
     }
 
-    public function disableStrictHostKeyChecking(): self
+    /**
+     * @return $this
+     */
+    public function disableStrictHostKeyChecking()
     {
         $this->enableStrictHostChecking = false;
 
@@ -90,7 +131,7 @@ class Ssh
      *
      * @return string
      */
-    public function getExecuteCommand($command): string
+    public function getExecuteCommand($command)
     {
         $commands = $this->wrapArray($command);
 
@@ -110,64 +151,93 @@ class Ssh
     /**
      * @param string|array $command
      *
-     * @return \Symfony\Component\Process\Process
+     * @return Process
      */
-    public function execute($command): Process
+    public function execute($command)
     {
         $sshCommand = $this->getExecuteCommand($command);
 
         return $this->run($sshCommand);
     }
 
-    public function getDownloadCommand(string $sourcePath, string $destinationPath): string
+    /**
+     * @param string $sourcePath
+     * @param string $destinationPath
+     * @return string
+     */
+    public function getDownloadCommand($sourcePath, $destinationPath)
     {
         return "scp {$this->getExtraScpOptions()} {$this->getTarget()}:$sourcePath $destinationPath";
     }
 
-    public function download(string $sourcePath, string $destinationPath): Process
+    /**
+     * @param string $sourcePath
+     * @param string $destinationPath
+     * @return Process
+     */
+    public function download($sourcePath, $destinationPath)
     {
         $downloadCommand = $this->getDownloadCommand($sourcePath, $destinationPath);
 
         return $this->run($downloadCommand);
     }
 
-    public function getUploadCommand(string $sourcePath, string $destinationPath): string
+    /**
+     * @param string $sourcePath
+     * @param string $destinationPath
+     * @return string
+     */
+    public function getUploadCommand($sourcePath, $destinationPath)
     {
         return "scp {$this->getExtraScpOptions()} $sourcePath {$this->getTarget()}:$destinationPath";
     }
 
-    public function upload(string $sourcePath, string $destinationPath): Process
+    /**
+     * @param string $sourcePath
+     * @param string $destinationPath
+     * @return Process
+     */
+    public function upload($sourcePath, $destinationPath)
     {
         $uploadCommand = $this->getUploadCommand($sourcePath, $destinationPath);
 
         return $this->run($uploadCommand);
     }
 
-    protected function getExtraSshOptions(): string
+    /**
+     * @return string
+     */
+    protected function getExtraSshOptions()
     {
         $extraOptions = $this->getExtraOptions();
 
-        if (! is_null($this->port)) {
+        if (null !== $this->port) {
             $extraOptions[] = "-p {$this->port}";
         }
 
         return implode(' ', $extraOptions);
     }
 
-    protected function getExtraScpOptions(): string
+    /**
+     * @return string
+     */
+    protected function getExtraScpOptions()
     {
         $extraOptions = $this->getExtraOptions();
 
         $extraOptions[] = '-r';
 
-        if (! is_null($this->port)) {
+        if (null !== $this->port) {
             $extraOptions[] = "-P {$this->port}";
         }
 
         return implode(' ', $extraOptions);
     }
 
-    private function getExtraOptions(): array
+    /**
+     * @return array
+     */
+    private function getExtraOptions()
     {
         $extraOptions = [];
 
@@ -183,25 +253,37 @@ class Ssh
         return $extraOptions;
     }
 
-    protected function wrapArray($arrayOrString): array
+    /**
+     * @param $arrayOrString
+     * @return array
+     */
+    protected function wrapArray($arrayOrString)
     {
         return (array) $arrayOrString;
     }
 
-    protected function run(string $command): Process
+    /**
+     * @param string $command
+     * @return Process
+     */
+    protected function run($command)
     {
-        $process = Process::fromShellCommandline($command);
+        $process = new Process($command);
 
         $process->setTimeout(0);
 
-        ($this->processConfigurationClosure)($process);
+        $processConfigureationClosure = $this->processConfigurationClosure;
+        $processConfigureationClosure($process);
 
-        $process->run($this->onOutput);
+        $process->run($this->onOutputClosure);
 
         return $process;
     }
 
-    protected function getTarget(): string
+    /**
+     * @return string
+     */
+    protected function getTarget()
     {
         return "{$this->user}@{$this->host}";
     }

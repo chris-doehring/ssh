@@ -1,23 +1,19 @@
 <?php
-
 namespace Spatie\Ssh\Tests;
 
+use ChrisDoehring\Ssh\Ssh;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Spatie\Snapshots\MatchesSnapshots;
-use Spatie\Ssh\Ssh;
 use Symfony\Component\Process\Process;
 
 class SshTest extends TestCase
 {
-    use MatchesSnapshots;
+    /** @var Ssh */
+    private $ssh;
 
-    private Ssh $ssh;
-
-    public function setUp(): void
+    public function setUp()
     {
         parent::setUp();
-
         $this->ssh = (new Ssh('user', 'example.com'));
     }
 
@@ -116,5 +112,13 @@ class SshTest extends TestCase
         })->getExecuteCommand('whoami');
 
         $this->assertMatchesSnapshot($command);
+    }
+
+    /**
+     * @param string $expected
+     */
+    private function assertMatchesSnapshot($expected)
+    {
+        $this->assertStringEqualsFile(__DIR__ . '/__snapshots__/SshTest__'.debug_backtrace()[1]['function'].'__1.txt', $expected);
     }
 }

@@ -1,9 +1,6 @@
-# A lightweight package to execute commands over an SSH connection
+# A lightweight package to execute commands over an SSH connection, based on `spatie/ssh`, with php 5.6 compatibility.
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/ssh.svg?style=flat-square)](https://packagist.org/packages/spatie/ssh)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spatie/ssh/run-tests?label=tests)](https://github.com/spatie/ssh/actions?query=workflow%3Arun-tests+branch%3Amaster)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/ssh.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/ssh)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/ssh.svg?style=flat-square)](https://packagist.org/packages/spatie/ssh)
+This package is a fork of the original [spatie/ssh](https://github.com/spatie/ssh) package to be compatible with php5.6. *Please use it with caution.*
 
 You can execute an SSH command like this:
 
@@ -13,18 +10,16 @@ Ssh::create('user', 'host')->execute('your favorite command');
 
 It will return an instance of [Symfony's `Process`](https://symfony.com/doc/current/components/process.html).
 
-## Support us
+## Support Spatie
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us). 
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+As Spatie is the original creator of this package, please consider [supporting them](https://spatie.be/open-source/support-us) or checkout another of their great [open source packages](https://spatie.be/open-source).
 
 ## Installation
 
-You can install the package via composer:
+You can install this package via composer:
 
 ```bash
-composer require spatie/ssh
+composer require chris-doehring/ssh
 ```
 
 ## Usage
@@ -35,7 +30,7 @@ You can execute an SSH command like this:
 $process = Ssh::create('user', 'example.com')->execute('your favorite command');
 ```
 
-It will return an instance of [Symfony's `Process`](https://symfony.com/doc/current/components/process.html).
+It will return an instance of [Symfony's `Process`](https://symfony.com/doc/3.3/components/process.html).
 
 ### Getting the result of a command
 
@@ -116,7 +111,7 @@ Under the hood the process will use `scp`.
 
 ### Modifying the Symfony process
 
-Behind the scenes all commands will be performed using [Symfonys `Process`](https://symfony.com/doc/current/components/process.html).
+Behind the scenes all commands will be performed using [Symfonys `Process`](https://symfony.com/doc/3.3/components/process.html).
 
 You can configure to the `Process` by using the `configureProcess` method. Here's and example where we disable the timeout.
 
@@ -152,7 +147,8 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
+This package has been forked to be compatible with the deprecated php version `5.6`. Please consider using php `7.4` and the most recent original package from [spatie/ssh](https://github.com/spatie/ssh).
+If you have to use it anyway, be sure to run it on the [security backport version of Microsoft](https://github.com/microsoft/php-src). Neither I nor any other contributors give any warranty when running this fork under php 5.6.
 
 ## Alternatives
 
@@ -160,6 +156,9 @@ If you discover any security related issues, please email freek@spatie.be instea
 
 ## Credits
 
+This package is completely based on [spatie/ssh](https://github.com/spatie/ssh). If you like it, please consider [supporting them](https://spatie.be/open-source/support-us).
+
+- [Chris Döhring](https://github.com/chris-doehring) (php 5.6 integration)
 - [Freek Van der Herten](https://github.com/freekmurze)
 - [All Contributors](../../contributors)
 
