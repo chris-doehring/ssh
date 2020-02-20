@@ -1,5 +1,9 @@
 # A lightweight package to execute commands over an SSH connection, based on `spatie/ssh`, with php 5.6 compatibility.
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/chris-doehring/ssh.svg?style=flat-square)](https://packagist.org/packages/spatie/ssh)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/chris-doehring/ssh/run-tests?label=tests)](https://github.com/spatie/ssh/actions?query=workflow%3Arun-tests+branch%3Amaster)
+[![Total Downloads](https://img.shields.io/packagist/dt/chris-doehring/ssh.svg?style=flat-square)](https://packagist.org/packages/spatie/ssh)
+
 This package is a fork of the original [spatie/ssh](https://github.com/spatie/ssh) package to be compatible with php5.6. *Please use it with caution.*
 
 You can execute an SSH command like this:
@@ -8,7 +12,7 @@ You can execute an SSH command like this:
 Ssh::create('user', 'host')->execute('your favorite command');
 ```
 
-It will return an instance of [Symfony's `Process`](https://symfony.com/doc/current/components/process.html).
+It will return an instance of [Symfony's `Process`](https://symfony.com/doc/3.3/components/process.html).
 
 ## Support Spatie
 
